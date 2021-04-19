@@ -43,6 +43,12 @@
       - Invalid states are impossible. Write classes so that it is difficult to place classes in invalid states.
       - Pre- and post-conditions are also know as assertions.
       - Programatically adding checks to the code is known as protection of invariants.
+  - Beyond object-oriented design for some concrete and actionable principles:
+    1. Command Query Seperation: Operations should either be commands or queries but not both. 
+      - NOT CQRS. This is an architectural distribution design pattern that shares some language with CQR.
+      - Commands have an observable side effect in the system.
+      - Operations that mutate the observable state.
+      - Query is an operation that returns data.
 
 
 - SINGLE RESPONSIBILITY PRINCIPLE:
