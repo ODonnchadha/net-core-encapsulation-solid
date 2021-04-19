@@ -18,6 +18,31 @@
       public void Read(int id);
     }
   ```
+  - Why string on Save()? Why void on Read()? We must "read" the source code:
+  ```csharp
+    public string Save(int id, string message)
+    {
+      var path = Path.Combine(this.WorkingDirectory, id + ".txt");
+      File.WriteAllText(path, message);
+      return path;
+    }
+    public void Read(int id)
+    {
+      var path = Path.Combine(this.WorkingDirectory, id + ".txt");
+      var msg = File.ReadAllText(path);
+      this.MessageRead(this, new MessageEventArgs { Message = msg });
+    }
+  ```
+  - Just tell your manager that the code sucks. End of story.
+  - Worry about long-term productivity later, maintainability, and technical debt later.
+  - NOTE: Code is read more than written. 10x. 20x.
+  - Classic definition: Two (2) traits:
+    1. Information hiding: This has nothing to do with exposing properties vis getters and setters.
+      - New phrase: "Implementation hiding." We hide *some* of the information.
+    2. Protection Of Invariants: Checking for preconditions and guarenteeing for post-conditions.
+      - Invalid states are impossible. Write classes so that it is difficult to place classes in invalid states.
+      - Pre- and post-conditions are also know as assertions.
+      - Programatically adding checks to the code is known as protection of invariants.
 
 
 - SINGLE RESPONSIBILITY PRINCIPLE:
