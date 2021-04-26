@@ -320,15 +320,16 @@
       return new Maybe<string>(message);
     }
   ```
-  ```csharp
-    public class SqlStore: Filestore
+  - The store is defined by the FileStore class.
+    ```csharp
+    public class Filestore
     {
-      public override void WriteAllText(string path, string message);
-      public override string ReadAllText(string path);
-      public override FileInfo GetFileInfo(int id, string workingDirectory) { return base.GetFileInfo(id, workingDirectory); }
+      public void WriteAllText(string path, string message) => File.WriteAllText(path, message);
+      public string ReadAllText(string path) => File.ReadAllText(path);
+      public FileInfo GetFileInfo(int id, string workingDirectory) => new FileInfo(Path.Combine(workingDirectory, id + ".txt"));
     }
   ```
-  - Strange inheritance heirarchy. Extract an interface.
+  - Strange inheritance heirarchy, especially as we extract an interface.
   ```csharp
     public interface IStore
     {
@@ -337,8 +338,38 @@
       FileInfo GetFileInfo(int id, string workingDirectory);
     }
     public class SqlStore: IStore
+    {
+      public override void WriteAllText(string path, string message);
+      public override string ReadAllText(string path);
+      // Throw new NotSupportedException.
+      public override FileInfo GetFileInfo(int id, string workingDirectory) => base.GetFileInfo(id, workingDirectory);
+    }
+    public class MessageStore
+    {
+      private readonly IStore store;
+      public MessageStore() => this.store = new FileStore();
+    }
   ```
-  - 4:20
+  - We need to remove the workingDirectory parameter from the interface.
+  ```csharp
+    public class Filestore : IStore
+    {
+      private readonly DirectoryInfo workingDirectory;
+      public Filestore(DirectoryInfo workingDirectory) => this.workingDirectory = workingDirectory;
+    }
+    public interface IStore
+    {
+      void WriteAllText(int id, string message);
+      Maybe<string> ReadAllText(int id);
+      FileInfo GetFileInfo(int id);
+    }
+    public class SqlStore: IStore
+    {
+      public override void WriteAllText(string id, string message);
+      public override string ReadAllText(int id);
+      public override FileInfo GetFileInfo(int id, string workingDirectory) => Throw new NotSupportedException();
+    }
+  ```
 
 - INTERFACE SEGRATION PRINCIPLE:
 - DEPENDENCY INVERSION PRINCIPLE:
